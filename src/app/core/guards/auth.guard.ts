@@ -24,52 +24,19 @@ export class AuthGuard  {
     ) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-
-   
-
-        // function getCookie(name) {
-        //     const cookieString = document.cookie;
-        //     const cookies = cookieString.split(';');
-            
-        //     for (let i = 0; i < cookies.length; i++) {
-        //         const cookie = cookies[i].trim();
-        //         if (cookie.startsWith(name + '=')) {
-        //             return cookie.substring(name.length + 1, cookie.length);
-        //         }
-        //     }
-            
-        //     return null;
-        // }
-        
-        // // Example usage:
-        // const id = getCookie('id');
+        console.log('Executing canActivate guard');
 
         if (typeof localStorage !== 'undefined' && localStorage.getItem('id')) {
+            console.log('User ID found in localStorage');
             return true;
         }else{
-            this.router.navigate(['signin'], { queryParams: { returnUrl: state.url } });
-
+            console.log('User ID not found in localStorage. Redirecting to login page.');
+            this.router.navigate(['login'], { queryParams: { returnUrl: state.url } });
             // this.router.navigate(['/account/login'], { queryParams: { returnUrl: state.url } });
             return false;
     
         }
 
 
-        // // if (environment.defaultauth === 'firebase') {
-        // //     const currentUser = this.authenticationService.currentUser();
-        // //     if (currentUser) {
-        // //         // logged in so return true
-        // //         return true;
-        // //     }
-        // // } else {
-        // //     const currentUser = this.authFackservice.currentUserValue;
-        // //     if (currentUser) {
-        // //         // logged in so return true
-        // //         return true;
-        // //     }
-        // // }
-        // // // not logged in so redirect to login page with the return url
-        // this.router.navigate(['/account/login'], { queryParams: { returnUrl: state.url } });
-        // return false;
     }
 }

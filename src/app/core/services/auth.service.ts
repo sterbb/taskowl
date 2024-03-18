@@ -36,10 +36,10 @@ public currentUser: Observable<User>;
           }));
   }
 
-  logout() {
-      // remove user from local storage to log user out
-      localStorage.removeItem('currentUser');
-      console.log(this.currentUserSubject)
-      // this.currentUserSubject.next(null);
-  }
+  // logout() {
+  //     // remove user from local storage to log user out
+  //     localStorage.removeItem('currentUser');
+  //     console.log(this.currentUserSubject)
+  //     // this.currentUserSubject.next(null);
+  // }
 }

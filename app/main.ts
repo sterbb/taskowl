@@ -1,6 +1,10 @@
-import {app, BrowserWindow, screen} from 'electron';
+import {app, BrowserWindow, ipcMain, powerMonitor, screen, shell} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+
+const activeWindow = require('active-win');
+let timer: any;
+let app_list: any = {}; 
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),
@@ -16,12 +20,15 @@ function createWindow(): BrowserWindow {
     y: 0,
     width: 695,
     height: 785,
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve),
       contextIsolation: false,
     },
   });
+
+  
 
   if (serve) {
     const debug = require('electron-debug');
@@ -76,6 +83,68 @@ try {
       createWindow();
     }
   });
+
+  ipcMain.on('openLink', (e,value) =>{
+    shell.openExternal(value);
+    console.log(value);
+  })
+ 
+  ipcMain.on('start-track', async (event) => {
+
+    let time:number = 1;
+
+  
+
+     timer = setInterval(async () => {
+      try {
+        const options = {}; // You need to define options object if required
+        const activeWin = await activeWindow(options);
+        setApps(activeWin.owner.name, time);
+        console.log(app_list)
+
+         const state = powerMonitor.getSystemIdleState(1); 
+          console.log('Current System State - ', state); 
+          const idle = powerMonitor.getSystemIdleTime() 
+          console.log('Current System Idle Time - ', idle); 
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+      }, 1000); // Execute every 1000 milliseconds (every second)
+
+    function setUserActivity(){
+
+    }
+    function setApps(app_use: string | number, time_use: number){
+
+      if(!app_list[app_use]){
+        app_list[app_use] = {};
+        app_list[app_use]['time'] = time_use;
+     
+      }else{
+        time_use = app_list[app_use]['time']
+        time_use++
+        app_list[app_use]['time'] = time_use;
+      }
+      time = 1;
+      
+    }
+
+
+  })
+
+  ipcMain.on('stop-track', async (event,data)=>{
+    clearInterval(timer);
+
+
+    win?.webContents.send('apps-used', app_list);
+    app_list = {};
+  })
+
+  ipcMain.on('pause-track', async (event,data)=>{
+    clearInterval(timer);
+    
+  })
 
 } catch (e) {
   // Catch Error

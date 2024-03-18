@@ -1,32 +1,32 @@
 <div class="container-fluid ">
   <div class="row">
-    <div class="col-8 d-flex flex-column nav-foot-bg text-white pb-2">
-        <div class="d-flex flex-row align-items-center mt-2">
-          <span class="me-5 text-uppercase mt-2">
+    <div class="col-8 d-flex flex-column nav-foot-bg text-white pb-1">
+        <div class="d-flex flex-row align-items-center mt-1">
+          <span class="me-5 text-uppercase mt-1 p-0 m-0" id="datename-today">
             Tue
           </span>
           <div class="dropdown mb-0">
-            <button class="btn btn-xs dropdown-toggle m-0 py-0 px-2 text-white" style="font-size: .8rem; background-color: #0C2851;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <span>PH</span>
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Settings</a></li>
-            </ul>
+
+            <select [(ngModel)]="selectedTimeZone" name="timezone" id="timezone" (change)="fetchTimezone()" class="btn btn-xs dropdown-toggle m-0 py-0 px-2 text-white" style="font-size: .8rem; background-color: #0C2851;" >
+              <option *ngFor="let timezone of listTimeZones" [ngValue]="timezone">{{timezone}}</option>
+            </select>
+            
           </div>
         </div>
 
-        <div style="margin-top: -8px;">
-          <p class="fw-bold fs-2 mb-0 p-0">04:25 A.M.</p>
+        <div style="margin: -8px 0px;">
+          <p class="fw-bold fs-2 mb-0 p-0" id="time-today">04:25 A.M.</p>
         </div>
         <div style="margin-top: -2px;"> 
-          <p class="mb-0" style="font-size: .9rem; margin-top: -6px;">MAR 16, 2024</p>
+          <p class="mb-0" id="date-today" style="font-size: .9rem; margin-top: -6px;">MAR 16, 2024</p>
         </div>
     </div>
 
     <div class="col-4 d-flex align-items-center justify-content-end nav-foot-bg">
       <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn dropdown-toggle text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           Whoo-hoo <span>Ryan</span>!
+          <img src="../../assets/images/default_user.png" alt="">
         </button>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="#">Settings</a></li>
@@ -41,23 +41,23 @@
 
   </div>
 
-  <div class="row py-3 px-5">
+  <div class="row pt-2 pb-3"  style="margin: 0 1.3em;">
     
-    <div class="col card-shadow">
+    <div class="col card-shadow div-border">
       <div class="row">
-        <div class="col-7 p-4">
-            <div class="card-shadow d-flex flex-column align-items-center justify-content-center ms-3 pb-3" style="padding: -2rem;">
+        <div class="col-7 p-4 pt-3 pb-1">
+            <div class="card-shadow d-flex flex-column align-items-center justify-content-center ms-3 pb-3 div-border" style="padding: -2rem;">
               <h1 class="m-0 timerTime" id="timerTime" name="timerTime" style="font-size: 4rem;">{{timerTime}}</h1>
               <p class="m-0" style="display: block;">Current Session</p>
             </div>
 
         </div>
 
-        <div class="col  p-4 me-2 d-flex flex-column justify-content-center">
+        <div class="col  p-4 pb-3 me-2 d-flex flex-column justify-content-center">
           
-          <select [(ngModel)]="selectedProject" name="selectedProject"  (change)="fetchTask()" class="mb-2 btn border text-start p-1">
-            <option [ngValue]="null" disabled hidden [selected]="!selectedProject">Choose a project</option>   
-            <option *ngFor="let project of projects" [ngValue]="{ id: project.id, name: project.project_name }">{{project.project_name}}</option>
+          <select [(ngModel)]="selectedProject" name="selectedProject" (change)="fetchTask()" class="mb-2 btn border text-start p-1">
+            <!-- <option value="" [selected]="!selectedProject" disabled>Select a project</option> -->
+            <option *ngFor="let project of projects" [ngValue]="project">{{ project.project_name }}</option>
           </select>
 
           <!-- <select  name="selectedProject"   class="mb-2 btn border text-start p-1">
@@ -65,18 +65,18 @@
           </select> -->
 
           <select [(ngModel)]="selectedTask" name="selectedTask"  class="mb-2 btn border text-start p-1">
-            <option [ngValue]="null" disabled hidden [selected]="!selectedTask">Choose a task</option>   
-            <option *ngFor="let task of tasks" [ngValue]="{ id: task.task_id, name: task.task_name }">{{task.task_name}}</option>
+            <!-- <option [ngValue]="null" disabled hidden [selected]="!selectedTask">Choose a task</option>    -->
+            <option *ngFor="let task of tasks" [ngValue]="task">{{task.task_name}}</option>
           </select>
 
           <!-- <select  name="selectedProject"   class="mb-2 btn border text-start p-1">
             <option  disabled hidden [selected]="!selectedProject">Choose a task</option>   
           </select> -->
 
-          <button class="w-100 btn primary-color p-1" (click)="trackTime()" id="start" name="start">{{isStart ? 'Pause': 'Start Venture'}}</button>
+          <button class="w-100 btn primary-color p-1 round-btn" (click)="trackTime()" id="start" name="start">{{isStart ? 'Break': 'Start Venture'}}</button>
           <div class="d-flex justify-content-evenly">
-            <button id="pause" class="pause btn btn-primary" >Pause</button>
-            <button id="stop" class="stop btn btn-danger" (click)="stopTrackTime()">Stop</button>
+            <button id="pause" class="pause btn btn-primary flex-grow-1 me-2 " (click)="trackTime()" style="display: none;">{{isStart ? 'Break': 'Resume'}}</button>
+            <button id="stop" class="stop btn btn-danger flex-grow-1 ms-2" (click)="stopTrackTime()" style="display: none;">Done</button>
           </div>
        
         </div>
@@ -86,34 +86,56 @@
 
   <div class="row">
 
-    <div class="col-7">
-      <div class="card-shadow " style="margin-left: 2.3em; margin-top: 0.5em; margin-right: 1.2em; height: 100%;">
+    <div class="col-7 pt-2">
+      <div class="card-shadow div-border" style="margin-left: 1.2em; margin-right: 1.2em; height: 100%;">
 
-        <div class="row mb-4 mx-1 ">
+        <div class="row mb-3 mx-1 ">
           <div class="col-8 mt-3 d-flex justify-content-between align-items-center">
-            <p>Available Task</p>
-            <button class="btn btn-outline-secondary m-0 px-3 py-1"> <img src="../../assets/images/search_icon.png" alt=""></button>
+            <input type="text" id="searchInput" class="w-100 m-0 p-1 rounded-input" placeholder="  Search...">
           </div>
           <div class="col m-0 pe-2 p-0 mt-3 d-flex justify-content-end align-items-center ">
-            <button class="btn btn-success m-0 p-1" style="font-size: .9em;">+Create Task</button>
+            <button class="btn btn-success m-0 p-1 rounded-pill" style="font-size: .9em;">+Create Task</button>
           </div>
         </div>
 
-        <div class="overflow-auto" style="overflow-x: hidden !important;">
-          <div class="task-container row">
+
+        <div class="row mb-2">
+
+          <div class="type col-4">
+
+            <div class="type-button">
+                <div class="type-btn">
+                    <button type="button" class="btn rounded-pill" [class.btn-active]="selectedTab === 'active'" (click)="changeTab('active')">TO-DO</button>
+                    <button type="button" class="btn rounded-pill" [class.btn-active]="selectedTab === 'archived'" (click)="changeTab('archived')">COMPLETED</button>
+                </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="overflow-auto" *ngIf="selectedTab === 'active'" style="overflow-x: hidden !important;">
+
+          <div class="task-container row"  *ngFor="let listoftask of listoftasks">
             <div class="col d-flex flex-column">
               
                <div class="row">
-                <div class="col-2 d-flex align-items-center ps-4 p-0 m-0">
+                <div class="col-3 d-flex align-items-center ps-4 p-0 m-0">
+                  <button type="button" class="btn done-btn p-0 pe-2" (click)="completeTask(listoftask.task_id)">
+                    <img src="../../assets/images/check-round.png" alt="" srcset="">
+                    <img src="../../assets/images/check-round-checked.png" alt="" srcset="">
+                  </button>
                   <img src="../../assets/images/favorite.png" alt="feather">
                 </div>
-                <div class="col-8 d-flex flex-column ">
-                  <p class="text-uppercase m-0 p-0" style="font-size: 0.9em;">Screenshot Function</p>
-                  <p class="m-0 p-0" style="font-size: 0.7em;">Programming</p>
+                
+                <div class="col-7 d-flex flex-column ">
+                  <p class="text-uppercase m-0 p-0" style="font-size: 0.9em;">{{listoftask.task_name}}</p>
+                  <p class="m-0 p-0" style="font-size: 0.7em;">{{listoftask.project_name}}</p>
                 </div>
   
-                <div class="col-2 d-flex align-items-center justify-content-start m-0 p-0">
-                  <button class="btn m-0 p-0"><img src="../../assets/images/playbutton.png" alt=""></button>
+                <div class="col-2 d-flex flex-column align-items-center justify-content-start m-0 p-0 pe-5">
+                  <button class="btn m-0 p-0" (click)="selectTask(listoftask.project_id,listoftask.project_name, listoftask.task_id,listoftask.task_name)"><img src="../../assets/images/playbutton.png" alt=""></button>
+                  <p  class="m-0 p-0" style="font-size: .7em; margin: 0 !important; padding: 0 !important;">{{listoftask.total_spent}}</p>
                 </div>
   
                </div>
@@ -124,37 +146,10 @@
             margin-left:1.2em;
             height: 1px;
             width: 19em;
-            background: rgba(190, 190, 190, 0.678);" class="my-2"></span>
+            background: rgba(190, 190, 190, 0.678);" class="my-1"></span>
 
           </div>
-  
-          <div class="task-container row">
-            <div class="col d-flex flex-column">
-              
-               <div class="row">
-                <div class="col-2 d-flex align-items-center ps-4 p-0 m-0">
-                  <img src="../../assets/images/unfavorite.png" alt="feather">
-                </div>
-                <div class="col-8 d-flex flex-column ">
-                  <p class="text-uppercase m-0 p-0" style="font-size: 0.9em;">Screenshot Function</p>
-                  <p class="m-0 p-0" style="font-size: 0.7em;">Programming</p>
-                </div>
-  
-                <div class="col-2 d-flex align-items-center justify-content-start m-0 p-0">
-                  <button class="btn  m-0 p-0"><img src="../../assets/images/playbutton.png" alt=""></button>
-                </div>
-  
-               </div>
-  
-            </div>
-
-            <span style="display: block;
-            margin-left:1.2em;
-            height: 1px;
-            width: 19em;
-            background: rgba(190, 190, 190, 0.678);" class="my-2"></span>
-         
-          </div>
+          
 
         </div>
   
@@ -165,7 +160,7 @@
 
     <div class="col-5 d-flex flex-column mt-2  m-0 p-0">
 
-      <div class="card-shadow me-5">
+      <div class="card-shadow div-border"  style="margin-right: 2em;">
         <div class="d-flex flex-column">
 
           <div class="row mt-1 px-2">
@@ -173,15 +168,17 @@
               <p style="font-size: 0.8em;">Bookmark</p>
             </div>
             <div class="col-6 ps-3">
-              <button class="btn btn-success m-0 p-0 px-1" style="font-size: 0.7em;">+ Add Website</button>
+              <button class="btn btn-success m-0 p-0 px-1 rounded-pill" style="font-size: 0.7em;">+ Add Website</button>
             </div>
           </div>
 
           <div class="row p-3 pt-2 pb-2">
-            <div class=" col-4 d-flex align-items-center flex-column">
+
+            <a id="bookmark_link" class="col-4 d-flex align-items-center flex-column bookmark_link remove-hyperlink" href="https://www.messenger.com/" #bookmark (click)="openLink($event, bookmark)">
               <img src="../../assets/images/owl_icon.png" alt="">
               <p style="font-size: 0.7em;">Dashboard</p>
-            </div>
+            </a>
+
             <div class="  col-4 d-flex align-items-center flex-column">
               <img src="../../assets/images/owl_icon.png" alt="" >
               <p style="font-size: 0.7em;">Dashboard</p>
@@ -195,25 +192,25 @@
         </div>
       </div>
 
-      <div class="card-shadow me-5 mt-3 text-center">
-        <p>Time spent</p>
+      <div class="card-shadow mt-3 text-center div-border" style="margin-right: 2em;">
+        <p class="mt-2" style="font-size: .8em; color: #5B5B5B;">Time spent</p>
 
-        <div class="row d-flex align-items-center justify-content-center">
-          <p><span>18</span>h <span>32</span>m</p>
+        <div class="row d-flex align-items-center justify-content-center mt-2 mb-4">
+          <p><span style="font-size: 2em;">18</span>h <span style="font-size: 2em;">32</span>m</p>
           <div>
             <p class="border mx-5"> Todays Total</p>
           </div>
         </div>
 
         <div class="row d-flex align-items-center justify-content-center">
-          <div class="col">
-            <p ><span>18</span>h <span>32</span>m</p>
+          <div class="col ms-2">
+            <p ><span style="font-size: 1.5em;">18</span>h <span style="font-size: 1.5em;">32</span>m</p>
             <div>
               <p class="border  mx-1  ms-3" style="font-size: .8em;"> Weekly Total</p>
             </div>
           </div>
-          <div class="col">
-            <p><span>18</span>h <span>32</span>m</p>
+          <div class="col me-2">
+            <p><span style="font-size: 1.5em;">18</span>h <span style="font-size: 1.5em;">32</span>m</p>
             <div>
               <p class="border  mx-1 me-3" style="font-size: .8em;">Monthly Total</p>
             </div>
@@ -226,22 +223,22 @@
         width: 13em;
         background: rgba(190, 190, 190, 0.678);" class="my-3"></span>
 
-        <p>Recent Task</p>
+        <p style="font-size: .8em; color: #5B5B5B;">Recent Task</p>
 
-        <div class="row">
+        <div class="row mt-3 mb-3">
 
-          <div class="col">
-            <div>
-              <p class="border"> 7:31 P.M.</p>
+          <div class="col ms-4">
+            <div class="">
+              <p class="border mx-1" style="font-size: .8em; border-color: #686868;"> 7:31 P.M.</p>
             </div>
-            <p style="font-size: .8em;">Screenshot Function</p>
+            <p style="font-size: .6em;">Screenshot Function</p>
           </div>
 
-          <div class="col">
-            <div>
-              <p class="border"> 7:31 P.M.</p>
+          <div class="col me-4" style="overflow: hidden; white-space: nowrap;  text-overflow: ellipsis !important;">
+            <div class="">
+              <p class="border mx-1" style="font-size: .8em; border-color: #686868;"> 7:31 P.M.</p>
             </div>
-            <p style="font-size: .8em;">Screenshot Function</p>
+            <p style="font-size: .6em; ">Screenshot Function</p>
           </div>
           
           
@@ -253,11 +250,7 @@
 
   </div>
 
-
-
-  <!-- <a href="http://google.com"></a> -->
-
-  <footer class="row mt-4 nav-foot-bg">
+  <footer class="row mt-3 nav-foot-bg">
     ©Copyright
   </footer>
 </div>

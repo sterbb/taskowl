@@ -54,8 +54,11 @@
     "@angular/platform-browser": "17.0.8",
     "@angular/platform-browser-dynamic": "17.0.8",
     "@angular/router": "17.0.8",
+    "active-win": "8.2.1",
     "bootstrap": "5.3.3",
+    "moment-timezone": "0.5.45",
     "rxjs": "7.8.1",
+    "timezones.json": "1.7.1",
     "tslib": "2.6.2",
     "zone.js": "0.14.2"
   },

@@ -35,6 +35,14 @@ export class MainpageService {
     return this.http.post(this.baseUrl+'put.timelog.php', data);
   }
 
+  logAppsUsed(data:any){
+    return this.http.post(this.baseUrl+'put.applog.php', data);
+  }
+
+  updateTaskComplete(data:any){
+    return this.http.put(this.baseUrl+'put.updatetask.php', data)
+  }
+
 
 
 
