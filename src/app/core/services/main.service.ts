@@ -27,6 +27,15 @@ export class MainpageService {
     return this.http.get<any[]>(url);
   }
 
+  getTasksStats(id: any, status: any) {
+    // Construct the URL with both parameters
+    const url = `${this.baseUrl}get.taskassigned.php?id=${id}&status=${status}`;
+
+    // Make the HTTP GET request with the constructed URL
+    return this.http.get<any[]>(url);
+  }
+
+
   createTask(data: any){
     return this.http.post(this.baseUrl+'put.task.php', data);
   }

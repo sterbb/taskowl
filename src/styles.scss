@@ -25,7 +25,7 @@ html, body {
 }
 
 .primary-color{
-  background-color: #4DA464 !important;
+  background-color: #26D956 !important;
   color: white !important;
 }
 
@@ -41,6 +41,7 @@ p{
 
 .round-btn{
   border-radius: 0.7em !important; 
+  width: 30%;
 }
 
 .remove-hyperlink{
@@ -122,6 +123,7 @@ p{
   border-radius: 50px; /* Reduced border-radius for consistency */
   padding: 0;
   margin: 0;
+  margin-left: 2em;
   width:fit-content;
 }
 
