@@ -7,18 +7,22 @@ import { timeStamp } from 'console';
 
 import * as moment from  'moment-timezone';
 import { convertCompilerOptionsFromJson } from 'typescript/lib/tsserverlibrary';
+import { stat } from 'fs';
 
 
 @Component({
   selector: 'app-default',
-  templateUrl: './home.component.html',
+  templateUrl: './home2.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
 
   projects: any[] = [];
   tasks: any[] = [];
+
+  allTasks: any[] = [];
   listoftasks: any[] = [];
+
   selectedProject!: { project_id: string; project_name: string; };
   selectedTask!: { task_id: string; task_name: string; };
   selectedTimeZone: any = "Asia/Manila";
@@ -43,6 +47,7 @@ export class HomeComponent implements OnInit {
 
 
 
+  selectedStatus: any = 'O';
   selectedTab: any = 'active';
 
 
@@ -64,7 +69,7 @@ export class HomeComponent implements OnInit {
     this.fetchAllTask();
     this.getTimeAndDay();
 
-    setInterval(this.getTimeAndDay, 1000)
+    setInterval(() => this.getTimeAndDay(), 1000)
 
   }
 
@@ -74,7 +79,8 @@ export class HomeComponent implements OnInit {
 
 
   getTimeAndDay(){
-    this.fetchTimezone();
+
+    this.companyTimeZone =  moment().tz(this.selectedTimeZone).format();
     // Get the current date
     const currentDate: Date = new Date(this.companyTimeZone);
 
@@ -140,14 +146,9 @@ export class HomeComponent implements OnInit {
   }
 
   
-  fetchTimezone(){
-    this.companyTimeZone =  moment().tz(this.selectedTimeZone).format()
-  }
-
   fetchProject():void{
     this.mainPage.getProjects(this.user_org).subscribe(
       (data: any) =>{
- 
         this.projects = data.data;
         console.log(data.data)
       } 
@@ -172,6 +173,7 @@ export class HomeComponent implements OnInit {
       (data: any) =>{
         console.log(data)
         this.listoftasks = data.data;
+        this.allTasks = data.data;
       
       } 
     )
@@ -346,6 +348,7 @@ export class HomeComponent implements OnInit {
       this.timeData.task_id = this.selectedTask.task_id;
       this.timeData.task_name = this.selectedTask.task_name;
   
+  
       console.log(this.timeData)
       this.mainPage.logTimeTrack(this.timeData).subscribe(
         (data:any) =>{  
@@ -364,11 +367,15 @@ export class HomeComponent implements OnInit {
 
   }
 
+
   async getAppUsed(): Promise<void>{
     return new Promise((resolve, reject) => {
-      this.electronService.ipcRenderer.once('apps-used', async (event,data)=>{
+      this.electronService.ipcRenderer.once('time-track-stopped', async (event,apps,idle)=>{
 
-        this.timeData.apps_used = data;
+        this.timeData.apps_used = apps;
+
+        this.timeData.idle_time = idle;
+
         resolve();
       })  
     });
@@ -408,15 +415,35 @@ export class HomeComponent implements OnInit {
       this.router.navigate(['/login']);
   }
 
-  openLink(event: MouseEvent, linkElement: HTMLAnchorElement) {
+  openLink(event: MouseEvent, link: any) {
     event.preventDefault(); // Prevents the default behavior of the link
-    const hrefValue = linkElement.href;
-    this.electronService.ipcRenderer.send('openLink', hrefValue)
+    this.electronService.ipcRenderer.send('openLink', link)
     // You can perform further actions here
   }
 
-  changeTab(tab: string) {
-    this.selectedTab = tab;
+  changeStatus(tab: string) {
+    this.selectedStatus = tab;
+
+    console.log('ajflk;asejf')
+
+    if(tab == 'O'){
+      this.selectedTab = 'active'
+    }else{
+      this.selectedTab = 'archived'
+    }
+
+    console.log(this.selectedStatus + this.id);
+
+    this.mainPage.getTasksStats(this.id, this.selectedStatus).subscribe(
+      (data:any) =>{  
+       this.listoftasks = data.data;
+       console.log(data)
+      },  
+      error =>{
+        console.log(error);
+    });
+
+
   }
 
   async selectTask(p_id: any, p_name: any, t_id: any, t_name: any){
@@ -450,22 +477,55 @@ export class HomeComponent implements OnInit {
 
   }
 
-  
+  searchTask(searchQuery: any){
 
-  searchTask(){
-    console.log("jflakseljkjes")
-    const hide_text = document.getElementById('available_task_test');
-    const searchInput = document.getElementById('searchInput');
+    var searchText = searchQuery.target.value;
+
+    var searchArray =  this.allTasks.filter(allTask => allTask.task_name.toLowerCase().includes(searchText.toLowerCase()));
+
+    this.listoftasks = searchArray;
+  }
+
+  makeFavorite(t_id: any){
+    this.taskData.task_id = t_id;
+    this.taskData.user_id = this.id;
+    //if else (1 favorite, 0 not)
+    this.taskData.favorite = 1;
     
+    this.mainPage.updateTaskFavorite(this.taskData).subscribe(
+      (data:any) =>{  
+        console.log(data)
+      },  
+      error =>{
+        console.log(error);
+    });
 
-    if (hide_text !== null && searchInput !== null) {
-      hide_text.style.display = 'none';
-      searchInput.style.display = '';
+
+  }
+
+
+  showBookmark(status: string){
+    const bookmarkDiv = document.getElementById('bookmark-div');
+    const bookmarkItems = document.getElementById('bookmark-items-div');
+
+
+
+    if(bookmarkDiv !== null && bookmarkItems !== null) {
+      if(status === 'show'){
+        bookmarkDiv.classList.toggle('show');
+        bookmarkItems.classList.toggle('show-container');
+
+      }else{
+        bookmarkDiv.classList.remove('show');
+        bookmarkItems.classList.remove('show-container');
+      }
+    } else {
+      console.error("Element with ID 'bookmark-div' not found.");
     }
   }
 
-
-
   ngAfterViewInit() {
   }
+
+
 }

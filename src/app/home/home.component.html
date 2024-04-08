@@ -117,23 +117,25 @@
         <div class="overflow-auto" *ngIf="selectedTab === 'active'" style="overflow-x: hidden !important;">
 
           <div class="task-container row"  *ngFor="let listoftask of listoftasks">
+
             <div class="col d-flex flex-column">
               
                <div class="row">
-                <div class="col-3 d-flex align-items-center ps-4 p-0 m-0">
-                  <button type="button" class="btn done-btn p-0 pe-2" (click)="completeTask(listoftask.task_id)">
+
+                <div class="col d-flex align-items-center p-0 m-0">
+                  <button type="button" class="btn done-btn p-0" (click)="completeTask(listoftask.task_id)">
                     <img src="../../assets/images/check-round.png" alt="" srcset="">
                     <img src="../../assets/images/check-round-checked.png" alt="" srcset="">
                   </button>
                   <img src="../../assets/images/favorite.png" alt="feather">
                 </div>
                 
-                <div class="col-7 d-flex flex-column ">
+                <div class="col d-flex flex-column ">
                   <p class="text-uppercase m-0 p-0" style="font-size: 0.9em;">{{listoftask.task_name}}</p>
                   <p class="m-0 p-0" style="font-size: 0.7em;">{{listoftask.project_name}}</p>
-                </div>
+                </div>  
   
-                <div class="col-2 d-flex flex-column align-items-center justify-content-start m-0 p-0 pe-5">
+                <div class="col d-flex flex-column align-items-center justify-content-start m-0 p-0">
                   <button class="btn m-0 p-0" (click)="selectTask(listoftask.project_id,listoftask.project_name, listoftask.task_id,listoftask.task_name)"><img src="../../assets/images/playbutton.png" alt=""></button>
                   <p  class="m-0 p-0" style="font-size: .7em; margin: 0 !important; padding: 0 !important;">{{listoftask.total_spent}}</p>
                 </div>
