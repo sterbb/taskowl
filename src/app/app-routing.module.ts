@@ -5,14 +5,18 @@ import { PageNotFoundComponent } from './shared/components';
 import { HomeRoutingModule } from './home/home-routing.module';
 import { DetailRoutingModule } from './detail/detail-routing.module';
 import { LoginRoutingModule } from './login/login-routing.module';
+import { WidgetRoutingModule } from './widget/widget-routing.module';
 import { AuthGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
+import { WidgetComponent } from './widget/widget.component';
 
 const routes: Routes = [
 
   { path: 'login', component: LoginComponent },
+  {path: 'widget', component: WidgetComponent,  canActivate: [AuthGuard]},
   { path: '', component: HomeComponent, canActivate: [AuthGuard]},
+
   // tslint:disable-next-line: max-line-length
   // { path: '', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] },
   {
@@ -26,7 +30,9 @@ const routes: Routes = [
     RouterModule.forRoot(routes, {}),
     HomeRoutingModule,
     DetailRoutingModule,
-    LoginRoutingModule
+    LoginRoutingModule,
+    WidgetRoutingModule
+    
     
   ],
   exports: [RouterModule]

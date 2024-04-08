@@ -1,4 +1,4 @@
-import {app, BrowserWindow, ipcMain, Menu, powerMonitor, nativeImage ,screen, shell, Tray} from 'electron';
+import {app, BrowserWindow, ipcMain, Menu, powerMonitor, nativeImage ,screen, shell, Tray, Notification} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -7,14 +7,18 @@ let timer: any;
 let app_list: any = {}; 
 let idleTime: number;
 let marked_idle: number = 0;
+let current_idle: any = {};
+let idle_data: any = [];
+let start_idle: any = '';
 
 let isQuitting = false;
 
 // let idle_list: any = {}; 
 
-let treshold_time: number = 15;
+let treshold_time: number = 5;
 
 let win: BrowserWindow | null = null;
+let widgetWindow: BrowserWindow | null = null;
 const args = process.argv.slice(1),
 serve = args.some(val => val === '--serve');
 
@@ -77,6 +81,11 @@ function createWindow(): BrowserWindow {
     }
   });
 
+  win.on('minimize', () =>{
+    console.log('fjl;kasejlfek')
+    openAnotherComponent();
+  })
+
   
 
 
@@ -90,6 +99,50 @@ function createWindow(): BrowserWindow {
   // });
 
   return win;
+}
+
+function openAnotherComponent() {
+  widgetWindow = new BrowserWindow({
+    width: 324,
+    height: 101,
+    frame: false, // Remove frame to make it look like a widget
+    
+    transparent: true, // Make the background transparent
+    alwaysOnTop: true, // Keep the widget window on top of other windows
+ 
+    webPreferences: {
+      nodeIntegration: true,
+      webSecurity: false, // Allow loading local resources
+      devTools: false
+    },
+
+  });
+
+  // Load the HTML file for the other component
+  // widgetWindow.loadFile(path.join('file:', __dirname, 'widget/widget.component.html'));
+
+  // Construct an absolute file URL for the widget component HTML file
+  // const fileURL = `file://${__dirname}/src/app/widget/widget.component.html`;
+
+  
+  const url = new URL(path.join('file:', __dirname, '../src/app/widget/widget.component.html'));
+  widgetWindow.loadURL(url.href);
+
+
+  // if (serve) {
+  //   // If in development mode, load the Angular route using localhost
+  //   widgetWindow.loadURL('http://localhost:4200/#/widget');
+  // } else {
+  //   // If in production mode, construct the file URL for the Angular route
+  //   let pathIndex = './index.html';
+  //   if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
+  //     pathIndex = '../dist/index.html';
+  //   }
+  //   const fileURL = `file://${__dirname}/${pathIndex}#/widget`;
+
+  //   console.log(fileURL);
+  //   widgetWindow.loadURL(fileURL);
+  // }
 }
 
 try {
@@ -174,6 +227,29 @@ app.whenReady().then(() => {
 
   // Start the interval for checking idle time
   // intervalId = setInterval(checkIdleTime, 1000);
+
+  function getGreeting() {
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+  
+    if (currentHour < 12) {
+      return 'Good morning';
+    } else if (currentHour < 18) {
+      return 'Good afternoon';
+    } else {
+      return 'Good evening';
+    }
+  }
+  
+  function showNotification () {
+    let greeting = getGreeting();
+    const NOTIFICATION_TITLE = 'TaskOwl';
+    const NOTIFICATION_BODY = greeting + "User!";
+    new Notification({ title: NOTIFICATION_TITLE, body: NOTIFICATION_BODY}).show();
+  }
+
+  showNotification();
+
 });
 
 
@@ -198,11 +274,13 @@ app.whenReady().then(() => {
 
           idleTime = powerMonitor.getSystemIdleTime();
 
-
           if(idleTime >= treshold_time){
             setUserActivity();
+          }else if(idleTime == 0 && start_idle != ''){
+            setUserActivity();
           }
-            
+
+          console.log(powerMonitor.getSystemIdleState(1))
 
         } catch (error) {
           console.error('Error:', error);
@@ -211,6 +289,7 @@ app.whenReady().then(() => {
 
     // if user is idle
     function setUserActivity(){
+      
 
         if(idleTime > treshold_time){
           marked_idle ++;
@@ -218,7 +297,35 @@ app.whenReady().then(() => {
           marked_idle += idleTime;
         }
 
-        console.log("User is now idle: " + marked_idle)
+        if(powerMonitor.getSystemIdleState(1) == 'idle'){
+          if(start_idle == ''){
+            start_idle = Math.floor(Date.now() / 1000);
+            current_idle['start_time'] = start_idle;
+          }
+        }else if(powerMonitor.getSystemIdleState(1) == 'active'){
+          current_idle['end_time'] = Math.floor(Date.now() / 1000);
+          current_idle['total_time'] = marked_idle;
+ 
+          idle_data.push(current_idle);
+          console.log(current_idle);
+
+          marked_idle = 0;
+          start_idle = '';
+          current_idle = {};
+          
+  
+        }
+        console.log(start_idle);
+        console.log(idle_data);
+
+        
+
+
+
+
+
+
+        
     }
     function setApps(app_use: string | number, time_use: number){
 
@@ -243,9 +350,12 @@ app.whenReady().then(() => {
     clearInterval(timer);
 
 
-    win?.webContents.send('time-track-stopped', app_list, marked_idle);
+    win?.webContents.send('time-track-stopped', app_list, idle_data);
     app_list = {};
     marked_idle = 0;
+    current_idle = {};
+    idle_data = [];
+    start_idle = '';
   })
 
   ipcMain.on('pause-track', async (event,data)=>{

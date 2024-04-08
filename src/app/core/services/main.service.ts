@@ -52,6 +52,10 @@ export class MainpageService {
     return this.http.put(this.baseUrl+'put.updatetask.php', data)
   }
 
+  updateTaskFavorite(data:any){
+    return this.http.put(this.baseUrl+'put.updatefavorite.php', data)
+  }
+
 
 
 

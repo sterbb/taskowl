@@ -11,22 +11,21 @@
                     </span>
                 
                 </div>
-
-                <div class="col d-flex justify-content-end">
-                    <div class="dropdown">
-                        <button class="btn dropdown-toggle text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          Whoo-hoo <span>Ryan</span>!
-                          <img src="../../assets/images/default_user2.png" alt="">
-                        </button>
-                        <ul class="dropdown-menu">
-                          <li><a class="dropdown-item" href="#">Settings</a></li>
-                          <li><a class="dropdown-item" href="#">Dark Mode</a></li>
-                          <hr>
-                          <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
-                          <li><a class="dropdown-item" href="#">Exit</a></li>
-                        </ul>
-                      </div>
-                </div>
+   
+                  <div class=" col dropdown header-dropdown">
+                      <button class="btn bg-transparent dropdown-toggle text-white " type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Whoo-hoo <span>Ryan</span>!
+                        <img src="../../assets/images/default_user2.png" alt="">
+                      </button>
+                      <ul class="dropdown-menu bg-white">
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Dark Mode</a></li>
+                        <div class="dropdown-divider"></div>
+                        <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
+                        <li><a class="dropdown-item" href="#">Exit</a></li>
+                      </ul>
+                  </div>
+            
             </div>
 
             <div class="row">
@@ -80,16 +79,14 @@
                 <div class="type-btn">
                     <button type="button" class="btn rounded-pill" [class.btn-active]="selectedTab === 'active'" (click)="changeStatus('O')">TO-DO</button>
                     <button type="button" class="btn rounded-pill" [class.btn-active]="selectedTab === 'archived'" (click)="changeStatus('C')">COMPLETED</button>
-                </div>
-
-       
+                </div>       
             </div>
 
 
         </div>
 
         <div class="col">
-          <input type="text" id="searchInput" class="w-100 m-0 p-1 rounded-input" placeholder="  Search...">
+          <input type="text" id="searchInput" class="w-100 m-0 p-1 rounded-input" placeholder="  Search..." (input) ="searchTask($event)">
         </div>
     </div>
 
@@ -107,7 +104,9 @@
                       <img src="../../assets/images/check-round2.png" alt="" srcset="">
                       <img src="../../assets/images/check-round-checked2.png" alt="" srcset="">
                     </button>
-                    <img class="ms-3" src="../../assets/images/favorite.png" alt="feather">
+                    <button type="button" class="btn p-0" (click) = "makeFavorite(listoftask.task_id)">
+                      <img class="ms-3" src="../../assets/images/unfavorite.png" alt="feather">
+                    </button>
                   </div>
                   
                   <div class="col-6 d-flex flex-column m-0 p-0">
@@ -133,6 +132,7 @@
   
             </div>
             
+            
   
           </div>
         
@@ -144,20 +144,24 @@
     
 
         <div class="col-3 d-flex flex-column bookmark-items-div" id="bookmark-items-div">
-          <button class="btn bookmark-btn-close" id="bookmark-btn-close" style="position: absolute; top: 1em; left: 5em;" (click)="showBookmark('hide')"> X</button>
-            <ul>
-              <li>  
-                <a id="bookmark_link" class="col-4 d-flex align-items-center flex-column bookmark_link remove-hyperlink" href="https://www.messenger.com/" #bookmark (click)="openLink($event, bookmark)">
+          <button class="btn bookmark-btn-close" id="bookmark-btn-close" style="position: absolute; top: 1em; left: 4.5em;" (click)="showBookmark('hide')"> X</button>
+            <ul class="mt-4 d-flex flex-column align-items-center justify-content-center pl-0">
+              <li class="mb-3">  
+                <a id="bookmark_link" class="col-4 d-flex align-items-center flex-column bookmark_link remove-hyperlink" href="https://www.messenger.com/" #bookmark (click)="openLink($event, 'https://www.messenger.com/')">
                   <img src="../../assets/images/owl_icon.png" alt="">
-                  <p style="font-size: 0.7em;">Dashboard</p>
+                  <p style="font-size: 0.7em;">Messenger</p>
                 </a>
               </li>
               <li>  
-                <a id="bookmark_link" class="col-4 d-flex align-items-center flex-column bookmark_link remove-hyperlink" href="https://www.messenger.com/" #bookmark (click)="openLink($event, bookmark)">
+                <a id="bookmark_link" class="col-4 d-flex align-items-center flex-column bookmark_link remove-hyperlink" href="https://www.facebook.com/" #bookmark (click)="openLink($event, 'https://www.facebook.com/' )">
                   <img src="../../assets/images/owl_icon.png" alt="">
-                  <p style="font-size: 0.7em;">Dashboard</p>
+                  <p style="font-size: 0.7em;">Facebook</p>
                 </a>
               </li>
+
+              <button class="me-4 p-2">+</button>
+
+   
             </ul>
 
          
