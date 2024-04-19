@@ -1,5 +1,31 @@
 <div class="container-fluid ">
 
+  <div class="row custom-bar">
+
+    <div class="col-10 draggable">
+
+    </div>
+
+    <div class="col-2 m-0 p-0 d-flex justify-content-end">
+      <div class="minimize-button-container">
+        <button class="minimize-button" (click)="minimize()">
+          <img src="../../assets/images/minimize.png
+          " alt="">
+        </button>
+      </div>
+    
+      <div class="close-button-container">
+        <button class="close-button" (click)="close()">
+          <img src="../../assets/images/close.png
+          " alt="">
+        </button>
+      </div>
+       
+    </div>
+
+  </div>
+
+
     <div class="row ">
         <div class="col main-bg">
 
@@ -32,12 +58,12 @@
                 <div class="col d-flex flex-column justify-content-center align-items-center mb-2">
                     <h1 class="m-0 mt-3 timerTime" id="timerTime" name="timerTime">{{timerTime}}</h1>
                     
-                  <button class="btn primary-color p-0 px-2 round-btn mt-1" (click)="trackTime()" id="start" name="start">{{isStart ? 'Break': 'Start Venture'}}</button>
-        
-                  <div class="d-flex justify-content-evenly">
+                  <button class="btn p-0 px-2 round-btn mt-1" (click)="trackTime()" id="start" name="start">Start Venture</button>
+                  <button id="stop" class="stop btn p-0 px-2 round-btn mt-1" (click)="stopTrackTime()" style="display: none;">Stop Venture</button>
+                  <!-- <div class="d-flex justify-content-evenly">
                     <button id="pause" class="pause btn btn-primary flex-grow-1 me-2 " (click)="trackTime()" style="display: none;">{{isStart ? 'Break': 'Resume'}}</button>
                     <button id="stop" class="stop btn btn-danger flex-grow-1 ms-2" (click)="stopTrackTime()" style="display: none;">Done</button>
-                  </div>
+                  </div> -->
                 </div>
         
             </div>
@@ -175,4 +201,9 @@
 
 
 
+
+
 </div>
+<!-- <footer class="row mt-3 nav-foot-bg">
+  ©Copyright
+</footer> -->

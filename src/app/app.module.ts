@@ -31,6 +31,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
     CoreModule,
     SharedModule,
     HomeModule,
+    WidgetModule,
     LoginModule,
     DetailModule,
     AppRoutingModule,

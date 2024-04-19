@@ -1,6 +1,8 @@
 import {app, BrowserWindow, ipcMain, Menu, powerMonitor, nativeImage ,screen, shell, Tray, Notification} from 'electron';
 import * as path from 'path';
+import * as url from 'url';
 import * as fs from 'fs';
+
 
 const activeWindow = require('active-win');
 let timer: any;
@@ -35,7 +37,11 @@ function createWindow(): BrowserWindow {
     y: 0,
     width: 493,
     height: 730,
+    // resizable: false,
     autoHideMenuBar: true,
+    movable: true,
+    frame: false, // Remove frame to make it look like a widget
+    transparent: true, // Make the background transparent
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve),
@@ -43,6 +49,7 @@ function createWindow(): BrowserWindow {
     },
   });
 
+  
   
 
   if (serve) {
@@ -61,7 +68,8 @@ function createWindow(): BrowserWindow {
     }
 
     const url = new URL(path.join('file:', __dirname, pathIndex));
-    win.loadURL(url.href);
+
+    win.loadURL(url.href + '#/widget');
   }
 
   // Emitted when the window is closed.
@@ -82,8 +90,31 @@ function createWindow(): BrowserWindow {
   });
 
   win.on('minimize', () =>{
-    console.log('fjl;kasejlfek')
-    openAnotherComponent();
+
+
+    // win?.setFullScreen(true); // Restore the window if it's minimized
+    win?.setBounds({
+      x: 100, // X-coordinate
+      y: 100, // Y-coordinate
+      width: 335, // Width
+      height: 110 // Height
+    })
+
+    win?.setAlwaysOnTop(true); // Make the window always on top
+
+    win?.webContents.insertCSS(`
+    body {
+      background-color: transparent !important;
+    }
+  `);
+
+    win?.webContents.send('widget', 'open');
+    
+
+  
+    // // Now proceed to resize and adjust other properties
+    // win.setSize(335, 110); // Resize the window
+
   })
 
   
@@ -102,47 +133,60 @@ function createWindow(): BrowserWindow {
 }
 
 function openAnotherComponent() {
+
   widgetWindow = new BrowserWindow({
-    width: 324,
-    height: 101,
+    width: 335,
+    height: 110,
     frame: false, // Remove frame to make it look like a widget
-    
+    autoHideMenuBar: true,
     transparent: true, // Make the background transparent
     alwaysOnTop: true, // Keep the widget window on top of other windows
  
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false, // Allow loading local resources
-      devTools: false
+      // devTools: false,
+      allowRunningInsecureContent: (serve),
+      contextIsolation: false
     },
 
   });
 
-  // Load the HTML file for the other component
-  // widgetWindow.loadFile(path.join('file:', __dirname, 'widget/widget.component.html'));
+  widgetWindow.webContents.on('did-finish-load', () => {
+    // Once the window has finished loading, send the IPC message
+    widgetWindow?.webContents.send('widget', 'open');
 
-  // Construct an absolute file URL for the widget component HTML file
-  // const fileURL = `file://${__dirname}/src/app/widget/widget.component.html`;
+    widgetWindow?.webContents.insertCSS(`
+      body {
+        background-color: transparent !important;
+      }
+    `);
+  });
 
-  
-  const url = new URL(path.join('file:', __dirname, '../src/app/widget/widget.component.html'));
-  widgetWindow.loadURL(url.href);
+
+  if (serve) {
+    const debug = require('electron-debug');
+    debug();
+
+    require('electron-reloader')(module);
+    widgetWindow.loadURL('http://localhost:4200');
+  } else {
+
+    let pathIndex = './index.html'; // Path to your Angular app's index.html
+
+    if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
+      // Path when running electron in local folder
+      pathIndex = '../dist/index.html';
+    }
+
+    const url = new URL(path.join('file:', __dirname, pathIndex));
+
+   widgetWindow.loadURL(url.href + '#/widget');
+   
+  }
 
 
-  // if (serve) {
-  //   // If in development mode, load the Angular route using localhost
-  //   widgetWindow.loadURL('http://localhost:4200/#/widget');
-  // } else {
-  //   // If in production mode, construct the file URL for the Angular route
-  //   let pathIndex = './index.html';
-  //   if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
-  //     pathIndex = '../dist/index.html';
-  //   }
-  //   const fileURL = `file://${__dirname}/${pathIndex}#/widget`;
 
-  //   console.log(fileURL);
-  //   widgetWindow.loadURL(fileURL);
-  // }
 }
 
 try {
@@ -362,6 +406,59 @@ app.whenReady().then(() => {
     clearInterval(timer);
     
   })
+
+  ipcMain.on('close', async (event,data)=>{
+    win?.hide(); // Hide the window instead
+    
+  })
+
+  ipcMain.on('minimize', async (event,data)=>{
+
+    if(data == "open-widget"){
+    // win?.setFullScreen(true); // Restore the window if it's minimized
+    win?.setBounds({
+      x: 100, // X-coordinate
+      y: 100, // Y-coordinate
+      width: 335, // Width
+      height: 110 // Height
+    })
+
+    win?.setAlwaysOnTop(true); // Make the window always on top
+
+    win?.webContents.insertCSS(`
+    body {
+      background-color: transparent !important;
+    }
+  `);
+
+    win?.webContents.send('widget', 'open');
+    
+
+
+    }else{
+      win?.setBounds({
+        x: 100, // X-coordinate
+        y: 100, // Y-coordinate
+        width: 493,
+        height: 730,
+      })
+  
+      win?.setAlwaysOnTop(false); // Make the window always on top
+  
+      win?.webContents.insertCSS(`
+        body {
+          background-color: white !important;
+        }
+      `);
+  
+      win?.webContents.send('main', 'open');
+      
+  
+    }
+
+    
+  })
+  
 
 } catch (e) {
   // Catch Error

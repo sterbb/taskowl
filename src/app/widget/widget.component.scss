@@ -1,9 +1,104 @@
-html, body {
-    -webkit-app-region: drag;
+
+*{
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  -webkit-app-region: drag;
+  background-color: transparent !important;
+
 }
 
 
-
 .widget-body{
+  // -webkit-app-region: drag;
+  width: 100%; 
+  height: 100%; 
   background-color: #5D87FF;
+  border-radius: 24px;
+  -webkit-app-region: drag;
+  
+
+}
+
+.widget-body button,
+.widget-body input,
+.widget-body select {
+  -webkit-app-region: no-drag;
+}
+
+.left-side{
+  background-color: white;
+  height: 100% !important;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  padding-right: 1em;
+}
+
+// .left-side-margin{
+//   margin-left: 1.2em;
+// }
+
+.timer{
+  font-size: 3em;
+  margin-top: 8px;
+}
+
+.project-text{
+  font-size: 12px;
+  color: #ACACAC;
+  padding: 0;
+  margin: 0;
+  margin-top: -10px;
+  padding-top: -10px;
+}
+
+.task-select{
+  margin-top:5px;
+  margin-left: -5px;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 1px !important;
+
+  background-color: #5D87FF;
+  color:white;
+}
+
+.play-button {
+  padding: 0; /* Remove default padding */
+  border: none; /* Remove default border */
+  background: none; /* Remove default background */
+}
+// .play-button img {
+//   max-width: 100%; /* Ensure image doesn't exceed the button width */
+//   height: auto; /* Maintain aspect ratio */
+//   display: block; /* Remove any extra space caused by image alignment */
+// }
+
+
+
+.back-button {
+  padding: 0; /* Remove default padding */
+  border: none; /* Remove default border */
+  background: none; /* Remove default background */
+  margin-left: 100px;
+  right: 0;
+}
+
+// .back-button img {
+//   max-width: 100%; /* Ensure image doesn't exceed the button width */
+//   height: auto; /* Maintain aspect ratio */
+
+// }
+
+.back-button-container{
+  margin-left: 6em;
+}
+
+.play-button-container{
+  margin-left: 1em;
+  margin-top: -0.5em !important;
 }

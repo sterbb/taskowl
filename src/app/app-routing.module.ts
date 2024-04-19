@@ -12,10 +12,11 @@ import { LoginComponent } from './login/login.component';
 import { WidgetComponent } from './widget/widget.component';
 
 const routes: Routes = [
-
-  { path: 'login', component: LoginComponent },
-  {path: 'widget', component: WidgetComponent,  canActivate: [AuthGuard]},
+  
   { path: '', component: HomeComponent, canActivate: [AuthGuard]},
+  { path: 'login', component: LoginComponent },
+  {path: 'widget', component: WidgetComponent},
+ 
 
   // tslint:disable-next-line: max-line-length
   // { path: '', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] },
