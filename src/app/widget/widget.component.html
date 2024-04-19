@@ -1,14 +1,37 @@
 <div class="container-fluid widget-body">
     
-    <div class="row">
+    <div class="row widget-padding">
 
-        <div class="col">
-            left
+        <div class="col-7 left-side d-flex align-items-center justify-content-center flex-column">
+
+            <h1 class="timer">
+                {{timerTime}}
+            </h1>
+
+            <select [(ngModel)]="selectedTask" name="selectedTask" class="mb-2 btn border task-select">
+
+                <option *ngFor="let listoftask of listoftasks" [ngValue]="listoftask">{{listoftask.task_name}}</option>
+                <option> Networking </option>
+            </select>
+
+            <p class="project-text">{{project_text}}</p>
+    
+
         </div>
 
-        <div class="col widget-body text-white">
-            asjkleflj;se
+        <div class="col-5 right-side">
+            <div class=" back-button-container">
+                <button class="btn m-0 p-0 back-button" (click)="minimize()"><img src="../../assets/images/widget-home.png" alt=""></button>
+            </div>
+            <div class=" play-button-container">
+                <button class="btn m-0 p-0 play-button" id="start"  (click)="trackTime()" ><img src="../../assets/images/widget-play.png" alt=""></button>
+                <button class="btn m-0 p-0 stop-button" id="stop"   (click)="stopTrackTime()" style="display: none;"><img src="../../assets/images/widget-stop.png" alt="" ></button>
+
+            </div>
+
         </div>
+
+
 
     </div>
 </div>

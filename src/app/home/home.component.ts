@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MainpageService } from '../core/services/main.service';
 import { Router } from '@angular/router';
 import { ElectronService } from '../core/services';
+import { SharedService } from '../core/services/shared.service';
+
 import { ipcMain, ipcRenderer } from 'electron';
 import { timeStamp } from 'console';
 
@@ -38,7 +40,7 @@ export class HomeComponent implements OnInit {
   timerTime: string = "00:00:00";
   startTime: any;
   endTime: any;
-  seconds: number = 0;
+  seconds: number = 0; // time for the task
   timeZone: any;
   listTimeZones: any;
   bookmark_link:any;
@@ -55,13 +57,35 @@ export class HomeComponent implements OnInit {
   timeData: any = {}; // Initialize formData as an empty object
   taskData: any = {}; // Initialize formData as an empty object
 
+  shareData: any = {};
 
 
 
-  constructor(private mainPage:MainpageService, private router: Router, private electronService:ElectronService) {
+
+  constructor(private mainPage:MainpageService, private router: Router, private electronService:ElectronService, private sharedService: SharedService) {
   }
 
   ngOnInit(): void {
+
+    this.electronService.ipcRenderer.on('widget', (event, wid_data) => {
+
+      
+      if(wid_data == 'open'){
+
+        
+        // this.sharedService.data$.subscribe(
+        //   data => {
+        //     this.sharedService.sendData(data);
+        //   }
+        // );
+
+        // clearInterval(this.timer);
+
+        this.router.navigate(['/widget']);
+
+      }
+      // Handle the 'widget' message as needed
+    });
 
     this.populateTimezone();
 
@@ -218,22 +242,22 @@ export class HomeComponent implements OnInit {
 
 
 
-    const pausebtn = document.getElementById('pause');
+
     const stopbtn = document.getElementById('stop');
     const startbtn = document.getElementById('start');
 
-    if (stopbtn !== null && pausebtn !== null && startbtn !== null ) {
+    if (stopbtn && startbtn) {
       stopbtn.style.display = 'none';
-      pausebtn.style.display = 'none';
       startbtn.style.display = '';
     }
     
+    // time for the task 
     this.seconds = 0;
     // this.pausedSeconds = 0; // Reset pausedSeconds
     this.timerTime = '00:00:00';
     // this.currentDateTimeDisplay.innerText = 'Current Date and Time: ';
 
-    this.seconds = 0;
+
     this.isStart = false;
     this.startTime = null;
     this.endTime = null;
@@ -247,17 +271,15 @@ export class HomeComponent implements OnInit {
 
     this.electronService.ipcRenderer.send('start-track')
 
-    const pausebtn = document.getElementById('pause');
-    const stopbtn = document.getElementById('stop');
     const startbtn = document.getElementById('start');
+    const stopbtn = document.getElementById('stop');
 
     this.startTime = Date.now() - (this.endTime - this.startTime || 0);
     
-    if (stopbtn !== null && pausebtn !== null && startbtn !== null ) {
+    if (startbtn && stopbtn) {
       stopbtn.style.display = '';
-      pausebtn.style.display = '';
       startbtn.style.display = 'none';
-  }
+    }
 
 
     if (!this.timer) {
@@ -522,6 +544,46 @@ export class HomeComponent implements OnInit {
     } else {
       console.error("Element with ID 'bookmark-div' not found.");
     }
+  }
+
+  close(){
+    this.sharedService.close();
+  }
+
+  minimize(){
+    this.sharedService.minimize('open-widget');
+    
+  
+
+    this.shareData.user_id = this.id;
+    this.shareData.user_org = this.user_org;
+
+    if( this.startTime != null){
+      this.shareData.startTime = this.startTime;
+    }
+
+    if(this.seconds != 0){
+      this.shareData.seconds = this.seconds;
+    }
+
+
+    // this.shareData.timezone = this.timeZone;
+    if(this.selectedProject != null){
+      this.shareData.project_id = this.selectedProject.project_id;
+      this.shareData.project_name = this.selectedProject.project_name;
+    }
+
+    if(this.selectedProject != null){
+      this.shareData.task_id = this.selectedTask.task_id;
+      this.shareData.task_name = this.selectedTask.task_name;
+    }
+
+
+    console.log(this.shareData)
+    this.sharedService.sendData(this.shareData);
+
+
+
   }
 
   ngAfterViewInit() {

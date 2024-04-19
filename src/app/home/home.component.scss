@@ -1,6 +1,11 @@
 :host {
   padding: 0;
   margin: 0;
+  background-color: white;
+}
+
+body{
+  background-color: white !important;
 }
 
 .main-bg{
@@ -11,8 +16,11 @@
     z-index: 100;
 }
 
+
 .main-text{
+  color: white;
   font-size: 12px;
+
 }
 
 .timerTime{
@@ -117,4 +125,60 @@ bookmark-btn-close{
 .header-dropdown{
   position: fixed;
   left: 55%;
+}
+
+.custom-bar{
+  background-color: #3B6EFF;
+
+}
+
+.close-button {
+  padding: 0 0.5em; /* Remove default padding */
+  border: none; /* Remove default border */
+  background: none; /* Remove default background */
+  cursor: pointer;
+}
+
+.minimize-button {
+  padding: 0 0.5em; /* Remove default padding */
+  border: none; /* Remove default border */
+  background: none; /* Remove default background */
+  cursor: pointer;
+}
+
+.close-button:hover {
+  background: rgb(197, 0, 0); /* Remove default background */
+  cursor: pointer;
+}
+
+.minimize-button:hover {
+  background-color: rgb(172, 172, 172); /* Remove default background */
+  cursor: pointer;
+}
+
+
+.close-button-container {
+  padding: 0; /* Remove default padding */
+
+  cursor: pointer;
+}
+
+.minimize-button-container {
+  padding: 0; /* Remove default padding */
+  margin-right: 0.5em;
+  cursor: pointer;
+}
+
+.draggable{
+  -webkit-app-region: drag;
+}
+
+#start{
+  background-color: #26D956;
+  color: white !important;
+}
+
+#stop{
+  background-color: #EB1414;
+  color: white !important;
 }
