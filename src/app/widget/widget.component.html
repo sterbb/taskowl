@@ -8,11 +8,10 @@
                 {{timerTime}}
             </h1>
 
-            <select [(ngModel)]="selectedTask" name="selectedTask" class="mb-2 btn border task-select">
-
-                <option *ngFor="let listoftask of listoftasks" [ngValue]="listoftask">{{listoftask.task_name}}</option>
-                <option> Networking </option>
-            </select>
+                <select [(ngModel)]="selectedTask" name="selectedTask" (change)="fillProject()" class="mb-2 btn border task-select">
+                    <option *ngFor="let listoftask of listoftasks" [ngValue]="listoftask">{{listoftask.task_name}}</option>
+                    <option> Networking </option>
+                </select>
 
             <p class="project-text">{{project_text}}</p>
     
