@@ -3,8 +3,11 @@ import * as path from 'path';
 import * as url from 'url';
 import * as fs from 'fs';
 
+import { Buffer } from 'node:buffer';
+
 
 const activeWindow = require('active-win');
+const screenshot = require('screenshot-desktop');
 let timer: any;
 let app_list: any = {}; 
 let idleTime: number;
@@ -405,7 +408,17 @@ app.whenReady().then(() => {
 
     
   })
-  
+
+  ipcMain.on('capture', async (event)=>{
+    screenshot().then((img: any) => {
+      var imgStr = img.toString('base64');
+
+      console.log(imgStr);
+      win?.webContents.send('screenshot', imgStr);
+    }).catch((err: any) => {
+      // ...
+    })
+  })
 
 } catch (e) {
   // Catch Error

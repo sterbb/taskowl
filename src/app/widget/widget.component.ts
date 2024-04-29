@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'; 
 import { ElectronService } from '../core/services';
 import { MainpageService } from '../core/services/main.service';
 import { SharedService } from '../core/services/shared.service';
