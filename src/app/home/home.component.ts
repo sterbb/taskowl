@@ -225,13 +225,29 @@ export class HomeComponent implements OnInit {
 
   trackTime():void {
     this.isStart = !this.isStart;
-
-
       if (this.isStart) {
           this.startClock();
       } else {
           this.pauseClock();
       }
+
+    this.electronService.ipcRenderer.send('capture');
+
+    this.electronService.ipcRenderer.on('screenshot', (event, image)=>{
+      // Create a new Image object
+      var img = new Image();
+
+      // Set the src attribute to the base64 string
+      img.src = 'data:image/png;base64,' + image;
+
+      // Wait for the image to load
+      img.onload = function() {
+          // Once the image is loaded, you can use it
+          // For example, you can append it to a container element
+          document.body.appendChild(img);
+      };
+
+    })
 
   }
 

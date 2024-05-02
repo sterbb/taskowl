@@ -3,8 +3,11 @@ import * as path from 'path';
 import * as url from 'url';
 import * as fs from 'fs';
 
+import { Buffer } from 'node:buffer';
+
 
 const activeWindow = require('active-win');
+const screenshot = require('screenshot-desktop');
 let timer: any;
 let app_list: any = {}; 
 let idleTime: number;
@@ -130,63 +133,6 @@ function createWindow(): BrowserWindow {
   // });
 
   return win;
-}
-
-function openAnotherComponent() {
-
-  widgetWindow = new BrowserWindow({
-    width: 335,
-    height: 110,
-    frame: false, // Remove frame to make it look like a widget
-    autoHideMenuBar: true,
-    transparent: true, // Make the background transparent
-    alwaysOnTop: true, // Keep the widget window on top of other windows
- 
-    webPreferences: {
-      nodeIntegration: true,
-      webSecurity: false, // Allow loading local resources
-      // devTools: false,
-      allowRunningInsecureContent: (serve),
-      contextIsolation: false
-    },
-
-  });
-
-  widgetWindow.webContents.on('did-finish-load', () => {
-    // Once the window has finished loading, send the IPC message
-    widgetWindow?.webContents.send('widget', 'open');
-
-    widgetWindow?.webContents.insertCSS(`
-      body {
-        background-color: transparent !important;
-      }
-    `);
-  });
-
-
-  if (serve) {
-    const debug = require('electron-debug');
-    debug();
-
-    require('electron-reloader')(module);
-    widgetWindow.loadURL('http://localhost:4200');
-  } else {
-
-    let pathIndex = './index.html'; // Path to your Angular app's index.html
-
-    if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
-      // Path when running electron in local folder
-      pathIndex = '../dist/index.html';
-    }
-
-    const url = new URL(path.join('file:', __dirname, pathIndex));
-
-   widgetWindow.loadURL(url.href + '#/widget');
-   
-  }
-
-
-
 }
 
 try {
@@ -423,7 +369,7 @@ app.whenReady().then(() => {
       height: 110 // Height
     })
 
-    win?.setAlwaysOnTop(true); // Make the window always on top
+
 
     win?.webContents.insertCSS(`
     body {
@@ -432,6 +378,8 @@ app.whenReady().then(() => {
   `);
 
     win?.webContents.send('widget', 'open');
+
+    win?.setAlwaysOnTop(true); // Make the window always on top
     
 
 
@@ -443,7 +391,7 @@ app.whenReady().then(() => {
         height: 730,
       })
   
-      win?.setAlwaysOnTop(false); // Make the window always on top
+
   
       win?.webContents.insertCSS(`
         body {
@@ -452,13 +400,25 @@ app.whenReady().then(() => {
       `);
   
       win?.webContents.send('main', 'open');
+
+      win?.setAlwaysOnTop(true); // Make the window always on top
       
   
     }
 
     
   })
-  
+
+  ipcMain.on('capture', async (event)=>{
+    screenshot().then((img: any) => {
+      var imgStr = img.toString('base64');
+
+      console.log(imgStr);
+      win?.webContents.send('screenshot', imgStr);
+    }).catch((err: any) => {
+      // ...
+    })
+  })
 
 } catch (e) {
   // Catch Error
