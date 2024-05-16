@@ -8,6 +8,9 @@ import { Buffer } from 'node:buffer';
 
 const activeWindow = require('active-win');
 const screenshot = require('screenshot-desktop');
+const io = require("socket.io-client")
+const socket = io("http://localhost:3000");
+
 let timer: any;
 let app_list: any = {}; 
 let idleTime: number;
@@ -53,7 +56,10 @@ function createWindow(): BrowserWindow {
   });
 
   
-  
+
+
+
+
 
   if (serve) {
     const debug = require('electron-debug');
@@ -134,6 +140,9 @@ function createWindow(): BrowserWindow {
 
   return win;
 }
+
+
+
 
 try {
   // This method will be called when Electron has finished
@@ -241,6 +250,7 @@ app.whenReady().then(() => {
   showNotification();
 
 });
+
 
 
   ipcMain.on('openLink', (e,value) =>{
@@ -358,6 +368,10 @@ app.whenReady().then(() => {
     
   })
 
+  socket.on('adminMessage', function(data:any) {
+    console.log(`Admin: ${data.message}`);
+  });
+
   ipcMain.on('minimize', async (event,data)=>{
 
     if(data == "open-widget"){
@@ -409,16 +423,29 @@ app.whenReady().then(() => {
     
   })
 
-  ipcMain.on('capture', async (event)=>{
+  socket.on("capture", function(data:any){
     screenshot().then((img: any) => {
       var imgStr = img.toString('base64');
 
+      socket.emit('clientScreenshot', {imgStr})
       console.log(imgStr);
-      win?.webContents.send('screenshot', imgStr);
+      // win?.webContents.send('screenshot', imgStr);
     }).catch((err: any) => {
       // ...
     })
+    
   })
+
+  // ipcMain.on('capture', async (event)=>{
+  //   screenshot().then((img: any) => {
+  //     var imgStr = img.toString('base64');
+
+  //     console.log(imgStr);
+  //     // win?.webContents.send('screenshot', imgStr);
+  //   }).catch((err: any) => {
+  //     // ...
+  //   })
+  // })
 
 } catch (e) {
   // Catch Error

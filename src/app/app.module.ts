@@ -18,6 +18,8 @@ import { DetailModule } from './detail/detail.module';
 
 import { AppComponent } from './app.component';
 import { CommonModule } from '@angular/common';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -36,6 +38,8 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
     DetailModule,
     AppRoutingModule,
     CommonModule,
+    BrowserAnimationsModule, // Required for animations
+    MatSnackBarModule, // Required for MatSnackBar
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
