@@ -4,12 +4,15 @@ import { Router } from '@angular/router';
 import { ElectronService } from '../core/services';
 import { SharedService } from '../core/services/shared.service';
 
+
 import { ipcMain, ipcRenderer } from 'electron';
 import { timeStamp } from 'console';
 
 import * as moment from  'moment-timezone';
 import { convertCompilerOptionsFromJson } from 'typescript/lib/tsserverlibrary';
 import { stat } from 'fs';
+
+import{MatSnackBar} from '@angular/material/snack-bar'
 
 
 @Component({
@@ -62,7 +65,7 @@ export class HomeComponent implements OnInit {
 
 
 
-  constructor(private mainPage:MainpageService, private router: Router, private electronService:ElectronService, private sharedService: SharedService) {
+  constructor(private mainPage:MainpageService, private router: Router, private electronService:ElectronService, private sharedService: SharedService, private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
@@ -86,8 +89,9 @@ export class HomeComponent implements OnInit {
       }
       // Handle the 'widget' message as needed
     });
-
+    
     this.populateTimezone();
+    this.openSnackBar("hello");
 
     this.fetchProject();
     this.fetchAllTask();
@@ -233,19 +237,24 @@ export class HomeComponent implements OnInit {
 
     this.electronService.ipcRenderer.send('capture');
 
+    // for photo
     this.electronService.ipcRenderer.on('screenshot', (event, image)=>{
+
+      this.timeData.screenshot = image;
+      //display image
+
       // Create a new Image object
-      var img = new Image();
+      // var img = new Image();
 
-      // Set the src attribute to the base64 string
-      img.src = 'data:image/png;base64,' + image;
+      // // Set the src attribute to the base64 string
+      // img.src = 'data:image/png;base64,' + image;
 
-      // Wait for the image to load
-      img.onload = function() {
-          // Once the image is loaded, you can use it
-          // For example, you can append it to a container element
-          document.body.appendChild(img);
-      };
+      // // Wait for the image to load
+      // img.onload = function() {
+      //     // Once the image is loaded, you can use it
+      //     // For example, you can append it to a container element
+      //     document.body.appendChild(img);
+      // };
 
     })
 
@@ -486,18 +495,21 @@ export class HomeComponent implements OnInit {
 
   async selectTask(p_id: any, p_name: any, t_id: any, t_name: any){
  
-    const play_project = {project_id: p_id, project_name:p_name}
-    const matchedProject = this.projects.find(project=>project.project_id == play_project.project_id && project.project_name == play_project.project_name);
-    this.selectedProject = matchedProject;
+    if(this.timer){
+      this.openSnackBar('There is currently a task running.')
+    }else{
+      const play_project = {project_id: p_id, project_name:p_name}
+      const matchedProject = this.projects.find(project=>project.project_id == play_project.project_id && project.project_name == play_project.project_name);
+      this.selectedProject = matchedProject;
 
-    await this.fetchTask()
+      await this.fetchTask()
 
-    const play_task = {task_id: t_id, task_name:t_name}
-    const matchedTask= this.tasks.find(task=>task.task_id == play_task.task_id && task.task_name == play_task.task_name);
-    this.selectedTask = matchedTask;
+      const play_task = {task_id: t_id, task_name:t_name}
+      const matchedTask= this.tasks.find(task=>task.task_id == play_task.task_id && task.task_name == play_task.task_name);
+      this.selectedTask = matchedTask;
 
-    this.trackTime()
-
+      this.trackTime()
+    }
   }
 
   async completeTask(t_id: any){
@@ -602,8 +614,17 @@ export class HomeComponent implements OnInit {
 
   }
 
+
+
   ngAfterViewInit() {
   }
 
+  openSnackBar(message: string) {
+    this.snackBar.open(message, 'Close', {
+      horizontalPosition: 'start',
+      verticalPosition: 'top',
+      duration: 3000,
+    });
+  }
 
 }

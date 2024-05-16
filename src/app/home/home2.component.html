@@ -116,6 +116,53 @@
         </div>
     </div>
 
+    <div class="row mt-4" *ngIf = "selectedTask">
+
+      <div class="overflow-auto col" style="overflow-x: hidden !important;">
+
+          <div class="row ">
+              
+            <div class="col d-flex flex-column mb-2">
+              
+               <div class="row div-currenttask">
+          
+                <div class="col-4 d-flex align-items-center ps-4 p-0 m-0 ">
+                  <button type="button" class="btn done-btn p-0 pe-2" (click)="completeTask(selectedTask.task_id)">
+                    <img src="../../assets/images/check-round2.png" alt="" srcset="">
+                    <img src="../../assets/images/check-round-checked2.png" alt="" srcset="">
+                  </button>
+                  <button type="button" class="btn p-0" (click) = "makeFavorite(selectedTask.task_id)">
+                    <img class="ms-3" src="../../assets/images/unfavorite-white.png" alt="feather">
+                  </button>
+                </div>
+                
+                <div class="col-6 d-flex flex-column m-0 p-0 div-currenttask">
+
+                  <p class="text-uppercase m-0 p-0 list-task-text div-currenttask">{{selectedTask.task_name}}</p>
+                  <p class="m-0 p-0 list-project-text div-currenttask" >{{selectedProject.project_name}}</p>
+                </div>  
+  
+                <div class="col-2 d-flex flex-column align-items-center justify-content-start m-0 p-0 pe-5 div-currenttask">
+                  <button class="btn m-0 p-0" (click)="selectTask(selectedProject.project_id,selectedProject.project_name, selectedTask.task_id,selectedTask.task_name)"><img src="../../assets/images/stopbutton.png" alt=""></button>
+                  <p  class="m-0 p-0" style="font-size: .7em; margin: 0 !important; padding: 0 !important;">spent</p>
+                </div>
+  
+              </div>
+  
+            </div>
+         
+            <!-- <hr> -->
+
+          </div>
+          
+          
+
+      </div>
+      
+
+    </div>
+
+
     <div class="row mt-4">
 
         <div class="overflow-auto col" style="overflow-x: hidden !important;">
@@ -171,7 +218,12 @@
 
         <div class="col-3 d-flex flex-column bookmark-items-div" id="bookmark-items-div">
           <button class="btn bookmark-btn-close" id="bookmark-btn-close" style="position: absolute; top: 1em; left: 4.5em;" (click)="showBookmark('hide')"> X</button>
-            <ul class="mt-4 d-flex flex-column align-items-center justify-content-center pl-0">
+            <ul class="mt-5 d-flex flex-column align-items-center justify-content-center pl-0">
+
+              <li class="mb-3">
+                <button class=" px-2 py-0 btn btn-success" style="margin-right: 2.2em;"><h5>+</h5></button>
+
+              </li>
               <li class="mb-3">  
                 <a id="bookmark_link" class="col-4 d-flex align-items-center flex-column bookmark_link remove-hyperlink" href="https://www.messenger.com/" #bookmark (click)="openLink($event, 'https://www.messenger.com/')">
                   <img src="../../assets/images/owl_icon.png" alt="">
@@ -185,8 +237,7 @@
                 </a>
               </li>
 
-              <button class="me-4 p-2">+</button>
-
+        
    
             </ul>
 
